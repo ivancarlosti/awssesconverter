@@ -8,9 +8,9 @@
   </main>
 
   <footer>
-    by <a href="https://tofran.com">tofran</a>
+    <a href="https://icc.gg/privacidade" target="_blank">Privacy Policy</a>
     ⭐️
-    <a href="https://github.com/tofran/aws-ses-smtp-credentials">source code</a>
+    <a href="https://icc.gg/termos" target="_blank">Terms and Conditions</a>
   </footer>
 </div>
 
