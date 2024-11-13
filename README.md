@@ -3,7 +3,7 @@
 Browser tool to convert AWS Secret Access Keys into AWS SES (Simple Email
 Service) passwords.
 
-Available in [https://tofran.github.io/aws-ses-smtp-credentials][static site].
+Available in [https://awsses.ivancarlos.com.br][static site].
 
 ## Library
 
