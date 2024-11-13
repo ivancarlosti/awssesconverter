@@ -24,7 +24,7 @@ getSESSmtpPassword(secretAccessKey, region);
 ```
 
 [npm library]: https://www.npmjs.com/package/aws-ses-smtp-credentials
-[static site]: https://tofran.github.io/aws-ses-smtp-credentials
+[static site]: https://awsses.ivancarlos.com.br
 
 ## Why?
 
