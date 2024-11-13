@@ -56,11 +56,7 @@
 <p class="mt-2 text-sm text-slate-400">
   Convert AWS Secret Access Keys into AWS SES (Simple Email Service) SMTP
   passwords. This tool is 100% browser code, no requests are made to servers or
-  third parties. Grab the source code from the
-  <a href="https://github.com/tofran/aws-ses-smtp-credentials">
-    github repository
-  </a>
-  .
+  third parties.
 </p>
 
 <label for="region-input">Region:</label>
