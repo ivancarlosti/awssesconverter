@@ -94,23 +94,23 @@
             <label for="region">SMTP Region:</label>
             <select id="region" name="region" required>
                 <option value="">Select a region</option>
-                <option value="us-east-2">US East (Ohio)</option>
-                <option value="us-east-1">US East (N. Virginia)</option>
-                <option value="us-west-2">US West (Oregon)</option>
-                <option value="ap-south-1">Asia Pacific (Mumbai)</option>
-                <option value="ap-northeast-2">Asia Pacific (Seoul)</option>
-                <option value="ap-southeast-1">Asia Pacific (Singapore)</option>
-                <option value="ap-southeast-2">Asia Pacific (Sydney)</option>
-                <option value="ap-northeast-1">Asia Pacific (Tokyo)</option>
-                <option value="ca-central-1">Canada (Central)</option>
-                <option value="eu-central-1">Europe (Frankfurt)</option>
-                <option value="eu-west-1">Europe (Ireland)</option>
-                <option value="eu-west-2">Europe (London)</option>
-                <option value="eu-south-1">Europe (Milan)</option>
-                <option value="eu-north-1">Europe (Stockholm)</option>
-                <option value="sa-east-1">South America (Sao Paulo)</option>
-                <option value="us-gov-west-1">AWS GovCloud (US)</option>
-                <option value="us-gov-east-1">AWS GovCloud (US)</option>
+                <option value="us-east-2">us-east-2: US East (Ohio)</option>
+                <option value="us-east-1">us-east-1: US East (N. Virginia)</option>
+                <option value="us-west-2">us-west-2: US West (Oregon)</option>
+                <option value="ap-south-1">ap-south-1: Asia Pacific (Mumbai)</option>
+                <option value="ap-northeast-2">ap-northeast-2: Asia Pacific (Seoul)</option>
+                <option value="ap-southeast-1">ap-southeast-1: Asia Pacific (Singapore)</option>
+                <option value="ap-southeast-2">ap-southeast-2: Asia Pacific (Sydney)</option>
+                <option value="ap-northeast-1">ap-northeast-1: Asia Pacific (Tokyo)</option>
+                <option value="ca-central-1">ca-central-1: Canada (Central)</option>
+                <option value="eu-central-1">eu-central-1: Europe (Frankfurt)</option>
+                <option value="eu-west-1">eu-west-1: Europe (Ireland)</option>
+                <option value="eu-west-2">eu-west-2: Europe (London)</option>
+                <option value="eu-south-1">eu-south-1: Europe (Milan)</option>
+                <option value="eu-north-1">eu-north-1: Europe (Stockholm)</option>
+                <option value="sa-east-1">sa-east-1: South America (Sao Paulo)</option>
+                <option value="us-gov-west-1">us-gov-west-1: AWS GovCloud (US)</option>
+                <option value="us-gov-east-1">us-gov-east-1: AWS GovCloud (US)</option>
             </select>
 
             <label for="secret">Secret Access Key:</label>
@@ -129,12 +129,12 @@
     </footer>
 
     <script>
-        // Função para converter uma string em um array de bytes (Uint8Array)
+        // Function to convert a string to a byte array (Uint8Array)
         function stringToBytes(str) {
             return new TextEncoder().encode(str);
         }
 
-        // Função para calcular a assinatura HMAC-SHA256
+        // Function to calculate the HMAC-SHA256 signature
         async function sign(key, msg) {
             const keyBytes = typeof key === 'string' ? stringToBytes(key) : key;
             const msgBytes = stringToBytes(msg);
@@ -151,7 +151,7 @@
             return new Uint8Array(signature);
         }
 
-        // Função para calcular a senha SMTP
+        // Function to calculate the SMTP password
         async function calculateKey(secretAccessKey, region) {
             const date = "11111111";
             const service = "ses";
@@ -165,15 +165,15 @@
             signature = await sign(signature, terminal);
             signature = await sign(signature, message);
 
-            // Adiciona o byte de versão (0x04) ao início da assinatura
+            // Add the version byte (0x04) to the beginning of the signature
             const signatureAndVersion = new Uint8Array([version, ...signature]);
 
-            // Codifica em Base64
+            // Encode in Base64
             const smtpPassword = btoa(String.fromCharCode(...signatureAndVersion));
             return smtpPassword;
         }
 
-        // Função para atualizar a senha SMTP automaticamente
+        // Function to update the SMTP password automatically
         async function updateSMTPPassword() {
             const secret = document.getElementById("secret").value;
             const region = document.getElementById("region").value;
@@ -191,7 +191,7 @@
             }
         }
 
-        // Função para copiar a senha SMTP para a área de transferência
+        // Function to copy the SMTP password to the clipboard
         function copyToClipboard() {
             const smtpPassword = document.getElementById("smtpPassword").textContent;
             navigator.clipboard.writeText(smtpPassword).then(() => {
@@ -201,11 +201,11 @@
             });
         }
 
-        // Atualiza a senha SMTP enquanto o usuário digita ou seleciona uma região
+        // Update the SMTP password as the user types or selects a region
         document.getElementById("secret").addEventListener("input", updateSMTPPassword);
         document.getElementById("region").addEventListener("change", updateSMTPPassword);
 
-        // Adiciona o evento de clique ao botão de copiar
+        // Add click event to the copy button
         document.getElementById("copyButton").addEventListener("click", copyToClipboard);
     </script>
 </body>
