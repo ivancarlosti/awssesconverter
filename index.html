@@ -60,8 +60,11 @@
             border-radius: 4px;
             word-wrap: break-word;
         }
-        .copy-button {
+        .button-container {
+            text-align: right;
             margin-top: 10px;
+        }
+        .copy-button {
             background-color: #28a745;
         }
         .copy-button:hover {
@@ -88,7 +91,7 @@
     <div class="container">
         <h1>AWS SES SMTP Password Generator</h1>
         <div class="subtitle">
-            Convert AWS Secret Access Keys into AWS SES (Simple Email Service) SMTP passwords. This tool runs 100% on browser, no requests are made to servers or third parties.
+            Convert AWS Secret Access Keys into AWS SES (Simple Email Service) SMTP passwords. This tool runs 100% on browser, no information is send to servers.
         </div>
 
         <form id="smtpForm">
@@ -121,7 +124,9 @@
         <div id="result" class="result" style="display: none;">
             <strong>Generated SMTP Password:</strong><br>
             <code id="smtpPassword"></code>
-            <button id="copyButton" class="copy-button">Copy to Clipboard</button>
+            <div class="button-container">
+                <button id="copyButton" class="copy-button">Copy to Clipboard</button>
+            </div>
         </div>
     </div>
 
