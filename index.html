@@ -8,10 +8,14 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
         .container {
             max-width: 500px;
             margin: 0 auto;
+            flex: 1;
         }
         label {
             display: block;
@@ -44,6 +48,28 @@
             border-radius: 4px;
             word-wrap: break-word;
         }
+        .copy-button {
+            margin-top: 10px;
+            background-color: #28a745;
+        }
+        .copy-button:hover {
+            background-color: #218838;
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #ccc;
+        }
+        footer a {
+            color: #007bff;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -74,15 +100,18 @@
 
             <label for="secret">Secret Access Key:</label>
             <input type="text" id="secret" name="secret" placeholder="Enter your Secret Access Key" required>
-
-            <button type="submit">Generate SMTP Password</button>
         </form>
 
         <div id="result" class="result" style="display: none;">
             <strong>Generated SMTP Password:</strong><br>
             <code id="smtpPassword"></code>
+            <button id="copyButton" class="copy-button">Copy to Clipboard</button>
         </div>
     </div>
+
+    <footer>
+        <a href="https://icc.gg/privacidade" target="_blank">Privacy Policy</a> ⭐️ <a href="https://icc.gg/termos" target="_blank">Terms and Conditions</a>
+    </footer>
 
     <script>
         // Função para converter uma string em um array de bytes (Uint8Array)
@@ -129,27 +158,40 @@
             return smtpPassword;
         }
 
-        // Manipula o envio do formulário
-        document.getElementById("smtpForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
-
+        // Função para atualizar a senha SMTP automaticamente
+        async function updateSMTPPassword() {
             const secret = document.getElementById("secret").value;
             const region = document.getElementById("region").value;
 
-            if (!secret || !region) {
-                alert("Please fill in all fields.");
-                return;
+            if (secret && region) {
+                try {
+                    const smtpPassword = await calculateKey(secret, region);
+                    document.getElementById("smtpPassword").textContent = smtpPassword;
+                    document.getElementById("result").style.display = "block";
+                } catch (error) {
+                    console.error("Error generating SMTP password:", error);
+                }
+            } else {
+                document.getElementById("result").style.display = "none";
             }
+        }
 
-            try {
-                const smtpPassword = await calculateKey(secret, region);
-                document.getElementById("smtpPassword").textContent = smtpPassword;
-                document.getElementById("result").style.display = "block";
-            } catch (error) {
-                alert("An error occurred while generating the SMTP password.");
-                console.error(error);
-            }
-        });
+        // Função para copiar a senha SMTP para a área de transferência
+        function copyToClipboard() {
+            const smtpPassword = document.getElementById("smtpPassword").textContent;
+            navigator.clipboard.writeText(smtpPassword).then(() => {
+                alert("SMTP password copied to clipboard!");
+            }).catch((err) => {
+                console.error("Failed to copy:", err);
+            });
+        }
+
+        // Atualiza a senha SMTP enquanto o usuário digita ou seleciona uma região
+        document.getElementById("secret").addEventListener("input", updateSMTPPassword);
+        document.getElementById("region").addEventListener("change", updateSMTPPassword);
+
+        // Adiciona o evento de clique ao botão de copiar
+        document.getElementById("copyButton").addEventListener("click", copyToClipboard);
     </script>
 </body>
 </html>
