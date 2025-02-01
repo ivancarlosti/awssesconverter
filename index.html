@@ -19,6 +19,15 @@
             margin: 0 auto;
             flex: 1;
         }
+        h1 {
+            margin-bottom: 0;
+        }
+        .subtitle {
+            margin-top: 8px;
+            margin-bottom: 20px;
+            color: #666;
+            font-size: 0.95em;
+        }
         label {
             display: block;
             margin-bottom: 8px;
@@ -77,6 +86,10 @@
 <body>
     <div class="container">
         <h1>AWS SMTP Password Generator</h1>
+        <div class="subtitle">
+            Convert AWS Secret Access Keys into AWS SES (Simple Email Service) SMTP passwords. This tool is 100% browser code, no requests are made to servers or third parties.
+        </div>
+
         <form id="smtpForm">
             <label for="region">SMTP Region:</label>
             <select id="region" name="region" required>
