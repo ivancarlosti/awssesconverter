@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS SMTP Password Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AWS SMTP Password Generator</h1>
+        <form id="smtpForm">
+            <label for="region">SMTP Region:</label>
+            <select id="region" name="region" required>
+                <option value="">Select a region</option>
+                <option value="us-east-2">US East (Ohio)</option>
+                <option value="us-east-1">US East (N. Virginia)</option>
+                <option value="us-west-2">US West (Oregon)</option>
+                <option value="ap-south-1">Asia Pacific (Mumbai)</option>
+                <option value="ap-northeast-2">Asia Pacific (Seoul)</option>
+                <option value="ap-southeast-1">Asia Pacific (Singapore)</option>
+                <option value="ap-southeast-2">Asia Pacific (Sydney)</option>
+                <option value="ap-northeast-1">Asia Pacific (Tokyo)</option>
+                <option value="ca-central-1">Canada (Central)</option>
+                <option value="eu-central-1">Europe (Frankfurt)</option>
+                <option value="eu-west-1">Europe (Ireland)</option>
+                <option value="eu-west-2">Europe (London)</option>
+                <option value="eu-south-1">Europe (Milan)</option>
+                <option value="eu-north-1">Europe (Stockholm)</option>
+                <option value="sa-east-1">South America (Sao Paulo)</option>
+                <option value="us-gov-west-1">AWS GovCloud (US)</option>
+                <option value="us-gov-east-1">AWS GovCloud (US)</option>
+            </select>
+
+            <label for="secret">Secret Access Key:</label>
+            <input type="text" id="secret" name="secret" placeholder="Enter your Secret Access Key" required>
+
+            <button type="submit">Generate SMTP Password</button>
+        </form>
+
+        <div id="result" class="result" style="display: none;">
+            <strong>Generated SMTP Password:</strong><br>
+            <code id="smtpPassword"></code>
+        </div>
+    </div>
+
+    <script>
+        // Function to sign a message using HMAC-SHA256
+        function sign(key, msg) {
+            const encoder = new TextEncoder();
+            const keyBytes = encoder.encode(key);
+            const msgBytes = encoder.encode(msg);
+
+            return crypto.subtle.importKey(
+                "raw",
+                keyBytes,
+                { name: "HMAC", hash: "SHA-256" },
+                false,
+                ["sign"]
+            ).then((importedKey) => {
+                return crypto.subtle.sign("HMAC", importedKey, msgBytes);
+            }).then((signature) => {
+                return new Uint8Array(signature);
+            });
+        }
+
+        // Function to calculate the SMTP password
+        async function calculateKey(secretAccessKey, region) {
+            const date = "11111111";
+            const service = "ses";
+            const terminal = "aws4_request";
+            const message = "SendRawEmail";
+            const version = 0x04;
+
+            let signature = await sign("AWS4" + secretAccessKey, date);
+            signature = await sign(new TextDecoder().decode(signature), region);
+            signature = await sign(new TextDecoder().decode(signature), service);
+            signature = await sign(new TextDecoder().decode(signature), terminal);
+            signature = await sign(new TextDecoder().decode(signature), message);
+
+            const signatureAndVersion = new Uint8Array([version, ...signature]);
+            const smtpPassword = btoa(String.fromCharCode(...signatureAndVersion));
+
+            return smtpPassword;
+        }
+
+        // Handle form submission
+        document.getElementById("smtpForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const secret = document.getElementById("secret").value;
+            const region = document.getElementById("region").value;
+
+            if (!secret || !region) {
+                alert("Please fill in all fields.");
+                return;
+            }
+
+            try {
+                const smtpPassword = await calculateKey(secret, region);
+                document.getElementById("smtpPassword").textContent = smtpPassword;
+                document.getElementById("result").style.display = "block";
+            } catch (error) {
+                alert("An error occurred while generating the SMTP password.");
+                console.error(error);
+            }
+        });
+    </script>
+</body>
+</html>
