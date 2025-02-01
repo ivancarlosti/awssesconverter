@@ -85,26 +85,29 @@
     </div>
 
     <script>
-        // Function to sign a message using HMAC-SHA256
-        function sign(key, msg) {
-            const encoder = new TextEncoder();
-            const keyBytes = encoder.encode(key);
-            const msgBytes = encoder.encode(msg);
+        // Função para converter uma string em um array de bytes (Uint8Array)
+        function stringToBytes(str) {
+            return new TextEncoder().encode(str);
+        }
 
-            return crypto.subtle.importKey(
+        // Função para calcular a assinatura HMAC-SHA256
+        async function sign(key, msg) {
+            const keyBytes = typeof key === 'string' ? stringToBytes(key) : key;
+            const msgBytes = stringToBytes(msg);
+
+            const importedKey = await crypto.subtle.importKey(
                 "raw",
                 keyBytes,
                 { name: "HMAC", hash: "SHA-256" },
                 false,
                 ["sign"]
-            ).then((importedKey) => {
-                return crypto.subtle.sign("HMAC", importedKey, msgBytes);
-            }).then((signature) => {
-                return new Uint8Array(signature);
-            });
+            );
+
+            const signature = await crypto.subtle.sign("HMAC", importedKey, msgBytes);
+            return new Uint8Array(signature);
         }
 
-        // Function to calculate the SMTP password
+        // Função para calcular a senha SMTP
         async function calculateKey(secretAccessKey, region) {
             const date = "11111111";
             const service = "ses";
@@ -113,18 +116,20 @@
             const version = 0x04;
 
             let signature = await sign("AWS4" + secretAccessKey, date);
-            signature = await sign(new TextDecoder().decode(signature), region);
-            signature = await sign(new TextDecoder().decode(signature), service);
-            signature = await sign(new TextDecoder().decode(signature), terminal);
-            signature = await sign(new TextDecoder().decode(signature), message);
+            signature = await sign(signature, region);
+            signature = await sign(signature, service);
+            signature = await sign(signature, terminal);
+            signature = await sign(signature, message);
 
+            // Adiciona o byte de versão (0x04) ao início da assinatura
             const signatureAndVersion = new Uint8Array([version, ...signature]);
-            const smtpPassword = btoa(String.fromCharCode(...signatureAndVersion));
 
+            // Codifica em Base64
+            const smtpPassword = btoa(String.fromCharCode(...signatureAndVersion));
             return smtpPassword;
         }
 
-        // Handle form submission
+        // Manipula o envio do formulário
         document.getElementById("smtpForm").addEventListener("submit", async (e) => {
             e.preventDefault();
 
