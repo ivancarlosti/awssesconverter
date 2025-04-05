@@ -11,7 +11,7 @@ Convert AWS Secret Access Keys into AWS SES (Simple Email Service) SMTP password
 [![pages-build-deployment](https://github.com/ivancarlosti/awssesconverter/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/ivancarlosti/awssesconverter/actions/workflows/pages/pages-build-deployment)
 
 ## Details
-Idea inspired by https://github.com/tofran/aws-ses-smtp-credentials
+Idea inspired by https://github.com/tofran/aws-ses-smtp-credentials under MIT license
  
 ---
 
