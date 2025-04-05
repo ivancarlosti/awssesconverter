@@ -1,6 +1,10 @@
 # AWS SES SMTP Password Generator
 Convert AWS Secret Access Keys into AWS SES (Simple Email Service) SMTP passwords. This tool runs 100% on the browser; no information is sent to servers.
 
+<a target="_blank" href="https://github.com/ivancarlosti/awssesconverter"><img src="https://img.shields.io/github/stars/ivancarlosti/awssesconverter?style=flat" /></a>
+<a target="_blank" href="https://github.com/ivancarlosti/awssesconverter"><img src="https://img.shields.io/github/last-commit/ivancarlosti/awssesconverter" /></a>
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/ivancarlosti?label=GitHub%20Sponsors)](https://github.com/sponsors/ivancarlosti)
+
 Idea inspired by https://github.com/tofran/aws-ses-smtp-credentials
 
 ---
