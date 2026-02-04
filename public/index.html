@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS SES SMTP Password Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ec7211;
+            /* AWS Orange-ish */
+            --primary-hover: #c85e0b;
+            --bg-gradient-start: #f3f4f6;
+            --bg-gradient-end: #e5e7eb;
+            --card-bg: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border-color: #d1d5db;
+            --focus-ring: rgba(236, 114, 17, 0.4);
+            --success-color: #059669;
+            --success-hover: #047857;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            color: var(--text-main);
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 550px;
+            margin: auto;
+            /* Center vertically and horizontally */
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #111827;
+            text-align: center;
+        }
+
+        .subtitle {
+            margin-top: 10px;
+            margin-bottom: 30px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #374151;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #111827;
+            background-color: #fff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-sizing: border-box;
+            appearance: none;
+        }
+
+        /* Custom arrow for select */
+        .select-wrapper {
+            position: relative;
+        }
+
+        .select-wrapper::after {
+            content: "▼";
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+        }
+
+        input[type="text"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px var(--focus-ring);
+        }
+
+        /* Result Area */
+        .result {
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        code#smtpPassword {
+            display: block;
+            background-color: #fff;
+            border: 1px solid #e5e7eb;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            word-break: break-all;
+            color: #111827;
+            margin-bottom: 15px;
+        }
+
+        button.copy-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 10px 20px;
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button.copy-button:hover {
+            background-color: var(--success-hover);
+        }
+
+        button.copy-button:active {
+            transform: scale(0.98);
+        }
+
+        /* Form styling fix for the select wrapper */
+        .select-wrapper select {
+            padding-right: 35px;
+            /* space for arrow */
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        footer a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        footer a:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>AWS SES SMTP Generator</h1>
+        <div class="subtitle">
+            Securely convert your AWS Secret Access Key into an SES SMTP password locally in your browser.
+        </div>
+
+        <form id="smtpForm">
+            <div class="form-group">
+                <label for="region">SMTP Region</label>
+                <div class="select-wrapper">
+                    <select id="region" name="region" required>
+                        <option value="">Select a region</option>
+                        <option value="us-east-2">us-east-2: US East (Ohio)</option>
+                        <option value="us-east-1">us-east-1: US East (N. Virginia)</option>
+                        <option value="us-west-2">us-west-2: US West (Oregon)</option>
+                        <option value="ap-south-1">ap-south-1: Asia Pacific (Mumbai)</option>
+                        <option value="ap-northeast-2">ap-northeast-2: Asia Pacific (Seoul)</option>
+                        <option value="ap-southeast-1">ap-southeast-1: Asia Pacific (Singapore)</option>
+                        <option value="ap-southeast-2">ap-southeast-2: Asia Pacific (Sydney)</option>
+                        <option value="ap-northeast-1">ap-northeast-1: Asia Pacific (Tokyo)</option>
+                        <option value="ca-central-1">ca-central-1: Canada (Central)</option>
+                        <option value="eu-central-1">eu-central-1: Europe (Frankfurt)</option>
+                        <option value="eu-west-1">eu-west-1: Europe (Ireland)</option>
+                        <option value="eu-west-2">eu-west-2: Europe (London)</option>
+                        <option value="eu-south-1">eu-south-1: Europe (Milan)</option>
+                        <option value="eu-north-1">eu-north-1: Europe (Stockholm)</option>
+                        <option value="sa-east-1">sa-east-1: South America (Sao Paulo)</option>
+                        <option value="us-gov-west-1">us-gov-west-1: AWS GovCloud (US)</option>
+                        <option value="us-gov-east-1">us-gov-east-1: AWS GovCloud (US)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="secret">Secret Access Key</label>
+                <input type="text" id="secret" name="secret" placeholder="e.g. wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+                    required autocomplete="off">
+            </div>
+        </form>
+
+        <!-- Hidden initially via script logic in original code, but CSS handles display via JS too -->
+        <div id="result" class="result" style="display: none;">
+            <strong>Generated SMTP Password</strong>
+            <code id="smtpPassword"></code>
+            <button id="copyButton" class="copy-button">Copy to Clipboard</button>
+        </div>
+
+        <footer>
+            <a href="https://icc.gg/privacidade" target="_blank">Privacy Policy</a> • <a href="https://icc.gg/termos"
+                target="_blank">Terms and Conditions</a>
+        </footer>
+    </div>
+
+    <!-- Original logic script preserved -->
+    <script>
+        // Function to convert a string to a byte array (Uint8Array)
+        function stringToBytes(str) {
+            return new TextEncoder().encode(str);
+        }
+
+        // Function to calculate the HMAC-SHA256 signature
+        async function sign(key, msg) {
+            const keyBytes = typeof key === 'string' ? stringToBytes(key) : key;
+            const msgBytes = stringToBytes(msg);
+
+            const importedKey = await crypto.subtle.importKey(
+                "raw",
+                keyBytes,
+                { name: "HMAC", hash: "SHA-256" },
+                false,
+                ["sign"]
+            );
+
+            const signature = await crypto.subtle.sign("HMAC", importedKey, msgBytes);
+            return new Uint8Array(signature);
+        }
+
+        // Function to calculate the SMTP password
+        async function calculateKey(secretAccessKey, region) {
+            const date = "11111111";
+            const service = "ses";
+            const terminal = "aws4_request";
+            const message = "SendRawEmail";
+            const version = 0x04;
+
+            let signature = await sign("AWS4" + secretAccessKey, date);
+            signature = await sign(signature, region);
+            signature = await sign(signature, service);
+            signature = await sign(signature, terminal);
+            signature = await sign(signature, message);
+
+            // Add the version byte (0x04) to the beginning of the signature
+            const signatureAndVersion = new Uint8Array([version, ...signature]);
+
+            // Encode in Base64
+            const smtpPassword = btoa(String.fromCharCode(...signatureAndVersion));
+            return smtpPassword;
+        }
+
+        // Function to update the SMTP password automatically
+        async function updateSMTPPassword() {
+            const secret = document.getElementById("secret").value;
+            const region = document.getElementById("region").value;
+
+            if (secret && region) {
+                try {
+                    const smtpPassword = await calculateKey(secret, region);
+                    document.getElementById("smtpPassword").textContent = smtpPassword;
+                    document.getElementById("result").style.display = "block";
+                } catch (error) {
+                    console.error("Error generating SMTP password:", error);
+                }
+            } else {
+                document.getElementById("result").style.display = "none";
+            }
+        }
+
+        // Function to copy the SMTP password to the clipboard
+        function copyToClipboard() {
+            const smtpPassword = document.getElementById("smtpPassword").textContent;
+            navigator.clipboard.writeText(smtpPassword).then(() => {
+                alert("SMTP password copied to clipboard!");
+            }).catch((err) => {
+                console.error("Failed to copy:", err);
+            });
+        }
+
+        // Update the SMTP password as the user types or selects a region
+        document.getElementById("secret").addEventListener("input", updateSMTPPassword);
+        document.getElementById("region").addEventListener("change", updateSMTPPassword);
+
+        // Add click event to the copy button
+        document.getElementById("copyButton").addEventListener("click", copyToClipboard);
+    </script>
+</body>
+
+</html>
